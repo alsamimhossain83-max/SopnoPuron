@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>স্বপ্নপূরণ - তোমার সাফল্যের সঙ্গী</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            /* আপনার পছন্দের ডার্ক ব্যাকগ্রাউন্ড */
+            background: #0f0c29; 
+            overflow: hidden;
+        }
+
+        /* নতুন অ্যানিমেটেড স্প্ল্যাশ স্ক্রিন */
+        .splash {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #0f0c29;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        .splash-content {
+            text-align: center;
+        }
+
+        .splash h1 { 
+            color: #fff; 
+            font-size: 3.5rem; 
+            margin: 0; 
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(108, 92, 231, 0.6); 
+        }
+
+        .splash p { 
+            color: #a29bfe; 
+            font-size: 1.2rem; 
+            margin-top: 5px; 
+            font-style: italic;
+        }
+
+        /* লোডিং বার স্টাইল */
+        .loader-container {
+            width: 200px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-top: 30px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .loader-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #6c5ce7, #a29bfe);
+            box-shadow: 0 0 10px #6c5ce7;
+            transition: width 0.1s linear;
+        }
+
+        .loader-text {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 12px;
+            margin-top: 10px;
+            font-family: sans-serif;
+        }
+
+        /* গ্লাস-মর্ফিজম কার্ড (লগইন/রেজিস্ট্রেশন) */
+        .auth-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            padding: 35px;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            width: 360px;
+            max-width: 90%;
+            text-align: center;
+            z-index: 10;
+        }
+
+        h2 { color: #fff; margin-bottom: 25px; font-size: 1.8rem; }
+        .input-box { position: relative; margin-bottom: 18px; }
+        .input-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #a29bfe; font-size: 18px; }
+        .input-box input {
+            width: 100%; padding: 14px 15px 14px 48px;
+            background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px; outline: none; box-sizing: border-box; font-size: 15px; color: #fff; transition: 0.3s;
+        }
+        .input-box input:focus { background: rgba(255, 255, 255, 0.15); border-color: #a29bfe; }
+        .eye-icon { position: absolute; right: 15px; left: auto !important; cursor: pointer; color: rgba(255, 255, 255, 0.5) !important; }
+
+        button {
+            width: 100%; padding: 14px; background: linear-gradient(90deg, #6c5ce7, #a29bfe);
+            color: white; border: none; border-radius: 12px; font-size: 17px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.4s;
+        }
+        button:hover { transform: translateY(-2px); }
+
+        .links { margin-top: 20px; font-size: 14px; color: #ddd; }
+        .links a { color: #a29bfe; text-decoration: none; font-weight: bold; }
+        
+        #error-msg { 
+            background: rgba(255, 71, 87, 0.2); color: #ff4757; padding: 10px; border-radius: 8px; font-size: 13px; margin-top: 15px; display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="splash" id="splash">
+        <div class="splash-content">
+            <h1>স্বপ্নপূরণ</h1>
+            <p>তোমার সাফল্যের সঙ্গী</p>
+            <div class="loader-container">
+                <div class="loader-bar" id="loaderBar"></div>
+            </div>
+            <div class="loader-text" id="loaderText">প্রস্তুতি চলছে... ০%</div>
+        </div>
+    </div>
+
+    <div class="auth-card">
+        <h2 id="title">লগইন</h2>
+        <div id="signup-fields" style="display: none;">
+            <div class="input-box"><i class="fas fa-user"></i><input type="text" id="name" placeholder="আপনার নাম"></div>
+            <div class="input-box"><i class="fas fa-phone"></i><input type="text" id="phone" placeholder="ফোন নাম্বার"></div>
+        </div>
+        <div class="input-box"><i class="fas fa-envelope"></i><input type="email" id="email" placeholder="ইমেইল এড্রেস"></div>
+        <div class="input-box">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="password" placeholder="পাসওয়ার্ড">
+            <i class="fas fa-eye eye-icon" id="togglePass"></i>
+        </div>
+        <button id="main-btn">লগইন করুন</button>
+        <div id="error-msg"></div>
+        <div class="links">
+            <span id="toggle-text">অ্যাকাউন্ট নেই?</span> 
+            <a href="javascript:void(0)" id="toggle-link">রেজিস্ট্রেশন করুন</a><br><br>
+            <a href="javascript:void(0)" id="reset-link">পাসওয়ার্ড ভুলে গেছেন?</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, setPersistence, browserLocalPersistence, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDJY_M208hg5KTHf749DlkM99w64Fna7CY",
+            authDomain: "sbopnporn.firebaseapp.com",
+            projectId: "sbopnporn",
+            storageBucket: "sbopnporn.firebasestorage.app",
+            messagingSenderId: "217423916538",
+            appId: "1:217423916538:web:9f8dc21358c2ad03cec843"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // লোডিং বার অ্যানিমেশন লজিক
+        function startLoading() {
+            const bar = document.getElementById('loaderBar');
+            const text = document.getElementById('loaderText');
+            let width = 0;
+            const interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        const splash = document.getElementById('splash');
+                        splash.style.opacity = '0';
+                        setTimeout(() => splash.style.display = 'none', 800);
+                    }, 500);
+                } else {
+                    width += Math.floor(Math.random() * 10) + 1;
+                    if(width > 100) width = 100;
+                    bar.style.width = width + '%';
+                    text.innerText = `প্রস্তুতি চলছে... ${width}%`;
+                }
+            }, 150);
+        }
+
+        // পেজ লোড হলে শুরু হবে
+        window.onload = startLoading;
+
+        // অটো-লগইন চেক
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                if(user.email === "admin@sopnopuron.com") window.location.href = "admin-dashboard.html";
+                else window.location.href = "home.html";
+            }
+        });
+
+        // পাসওয়ার্ড টগল
+        document.getElementById('togglePass').onclick = function() {
+            const passInput = document.getElementById('password');
+            passInput.type = passInput.type === "password" ? "text" : "password";
+            this.classList.toggle('fa-eye-slash');
+        };
+
+        // লগইন-রেজিস্ট্রেশন টগল
+        let isLogin = true;
+        const toggleLink = document.getElementById('toggle-link');
+        toggleLink.onclick = () => {
+            isLogin = !isLogin;
+            document.getElementById('title').innerText = isLogin ? "লগইন" : "রেজিস্ট্রেশন";
+            document.getElementById('main-btn').innerText = isLogin ? "লগইন করুন" : "রেজিস্ট্রেশন করুন";
+            document.getElementById('signup-fields').style.display = isLogin ? "none" : "block";
+            document.getElementById('toggle-text').innerText = isLogin ? "অ্যাকাউন্ট নেই?" : "অ্যাকাউন্ট আছে?";
+            toggleLink.innerText = isLogin ? "রেজিস্ট্রেশন করুন" : "লগইন করুন";
+        };
+
+        // লগইন ও রেজিস্ট্রেশন লজিক
+        document.getElementById('main-btn').onclick = async () => {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('error-msg');
+            errorDiv.style.display = "none";
+
+            if(!email || !password) {
+                errorDiv.innerText = "সব ঘর পূরণ করুন!";
+                errorDiv.style.display = "block";
+                return;
+            }
+
+            try {
+                await setPersistence(auth, browserLocalPersistence);
+                if (isLogin) {
+                    await signInWithEmailAndPassword(auth, email, password);
+                } else {
+                    const name = document.getElementById('name').value;
+                    const phone = document.getElementById('phone').value;
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    await setDoc(doc(db, "users", userCredential.user.uid), {
+                        name, phone, email, isPremium: false, examCount: 0, uid: userCredential.user.uid, joinedAt: new Date()
+                    });
+                    alert("রেজিস্ট্রেশন সফল!");
+                }
+            } catch (error) {
+                errorDiv.innerText = "ভুল ইমেইল বা পাসওয়ার্ড!";
+                errorDiv.style.display = "block";
+            }
+        };
+
+        // পাসওয়ার্ড রিসেট
+        document.getElementById('reset-link').onclick = async () => {
+            const email = document.getElementById('email').value;
+            if(!email) { alert("ইমেইলটি লিখুন।"); return; }
+            try {
+                await sendPasswordResetEmail(auth, email);
+                alert("রিসেট লিঙ্ক পাঠানো হয়েছে।");
+            } catch (error) { alert("ত্রুটি: " + error.message); }
+        };
+    </script>
+</body>
+</html>
